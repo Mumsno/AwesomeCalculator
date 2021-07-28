@@ -17,9 +17,9 @@ class RatingCalculator(object):
 
     def __init__(self, repos):
         self.repos = repos
-        self.data_frame = self._create_decile_data_frame()
+        self.data_frame = self.__create_decile_data_frame()
 
-    def _create_decile_data_frame(self):
+    def __create_decile_data_frame(self):
         """
         Creates a dataframe for all repos and calculates deciles for each ranking field
 
