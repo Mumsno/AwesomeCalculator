@@ -34,8 +34,7 @@ def get_user_input():
     return parser.parse_args()
 
 
-def main():
-    args = get_user_input()
+def main(args):
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
     api = GitHubAPI(args.token)
@@ -60,4 +59,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(get_user_input())
