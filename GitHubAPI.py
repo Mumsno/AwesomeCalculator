@@ -4,12 +4,20 @@ from requests import api
 
 
 class GitAPIEndpoints(object):
+    """
+    All Github API's endpoints
+    """
+
     REPO_INFO = "https://api.github.com/repos/{owner_name}/{repo_name}"
     README = "https://raw.githubusercontent.com/{owner_name}/{repo_name}/master/README.md"
     ISSUES_INFO = "https://api.github.com/search/issues"
 
 
 class GitHubAPI(object):
+    """
+    In charge of making API requests to github's api
+    """
+
     def __init__(self, token):
         self.token = token
 

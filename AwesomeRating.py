@@ -5,6 +5,10 @@ logger = logging.getLogger(__name__)
 
 
 class RatingCalculator(object):
+    """
+    Creates a data frame using all repo's data and calculate the awesome ratings for it.
+    """
+
     RANKING_FIELDS = [('last_issue_date', "desc"),
                       ('issues_count', "asc"), ('forks_count', "desc"), ('stars', "desc")]
     DECILE_FORMAT = "{}_decile"

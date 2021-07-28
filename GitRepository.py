@@ -13,6 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class RepositoryInfo(object):
+    """
+    In charge of fetching and parsing meta-data about the repository.
+    """
 
     def __init__(self, repo):
         self.repo = repo
@@ -56,6 +59,9 @@ class RepositoryInfo(object):
 
 
 class Repository(object):
+    """
+    Represents a Git Repository, and in charge of parsing Awesome data and sub-repos.
+    """
 
     def __init__(self, friendly_name, owner, repo_name, description, git_api):
         self.owner = owner
