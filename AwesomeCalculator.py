@@ -35,7 +35,6 @@ def get_user_input():
 
 
 def main(args):
-
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
     api = GitHubAPI(args.token)
 
