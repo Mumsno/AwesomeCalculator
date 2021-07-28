@@ -22,7 +22,9 @@ python AwesomeCalculator.py avelino awesome-go <your_token> --limit 20
 ```
 
 **Compatability**
+
 Supports every Windows x64/x86 with **python 2.7**
 
 **Developers**
+
 Amit Tal
