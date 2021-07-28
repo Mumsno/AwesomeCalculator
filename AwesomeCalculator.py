@@ -33,7 +33,6 @@ def get_user_input():
 
 
 def main():
-
     args = get_user_input()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
