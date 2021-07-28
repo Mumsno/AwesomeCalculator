@@ -67,6 +67,8 @@ class GitHubAPI(object):
 
         response = requests.get(api_url, params, headers=self.auth_header)
 
+        if response.status_code == 403:
+            raise GitApiException(u"API Rate Limit Exceeded")
         if response.status_code != 200:
             raise GitApiException(
                 u"Request Failed For {}".format(response.url))
