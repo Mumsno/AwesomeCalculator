@@ -1,3 +1,8 @@
+"""
+Awesome Calculator is a ranking program that searches for sub-repos of awesome repos and ranks them according to various criteria.
+Author: Amit Tal
+"""
+
 from re import sub
 from GitHubAPI import GitHubAPI
 from AwesomeRating import RatingCalculator
