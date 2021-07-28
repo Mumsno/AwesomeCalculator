@@ -1,3 +1,5 @@
+Awesome Calculator is a ranking program that searches for sub-repos of awesome repos and ranks them according to various criteria.
+
 **How To Use**
 ```
 usage: AwesomeCalculator.py [-h] [--debug] [--limit LIMIT]
