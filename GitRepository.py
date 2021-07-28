@@ -1,10 +1,12 @@
-from GitHubAPI import GitHubAPI, GitApiException
+from dateutil.relativedelta import relativedelta
+
 import re
 import dateutil.parser
-from dateutil.relativedelta import relativedelta
 import logging
 import datetime
 import time
+
+from GitHubAPI import GitHubAPI, GitApiException
 
 LINK_PATTERN = re.compile(
     u"\* \[(?P<friendly_name>.*)\]\(https://github\.com/(?P<owner_name>.*?)/(?P<repo_name>.*?)\) - (?P<description>.*)\.")
