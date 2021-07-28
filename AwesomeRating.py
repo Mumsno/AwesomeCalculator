@@ -13,11 +13,14 @@ class RatingCalculator(object):
     Creates a data frame using all repo's data and calculate the awesome ratings for it.
     """
 
-    RANKING_FIELDS = [('last_issue_date', "desc"),
-                      ('issues_count', "asc"), ('forks_count', "desc"), ('stars', "desc")]
+    ASCENDING = "asc"
+    DESCENDING = "desc"
+    RANKING_FIELDS = [('last_issue_date', DESCENDING),
+                      ('issues_count', ASCENDING), ('forks_count', DESCENDING), ('stars', DESCENDING)]
     DECILE_FORMAT = "{}_decile"
     SERIALIZEABLE_FIELDS = [("awesomeness", "Awesomeness"), ("description",
                                                              "Description"), ("license", "License"), ("url", "Link")]
+    DECILE = 10
 
     def __init__(self, repos):
         self._repos = repos
@@ -33,9 +36,9 @@ class RatingCalculator(object):
         data_frame = pd.DataFrame(self._repos)
 
         for field in RatingCalculator.RANKING_FIELDS:
-            field_name = field[0]
+            field_name = field[0]  # the first index is the field name
             data_frame[RatingCalculator.DECILE_FORMAT.format(field_name)] = pd.qcut(
-                data_frame[field_name].rank(method='first'), 10, labels=False)
+                data_frame[field_name].rank(method='first'), RatingCalculator.DECILE, labels=False)
 
         return data_frame
 
@@ -44,16 +47,17 @@ class RatingCalculator(object):
         Calculates the awesomeness according to the ranking fields order
         """
 
-        logger.info("Calculating Awesomeness")
         scores = []
+
+        logger.info("Calculating Awesomeness")
         for _, row in self._data_frame.iterrows():
             row_score = 0
             for ranking_field, ranking_order in RatingCalculator.RANKING_FIELDS:
                 field_decile = row[RatingCalculator.DECILE_FORMAT.format(
                     ranking_field)]
-                if ranking_order == 'asc':  # i.e Lower is better
-                    row_score += 10 - field_decile
-                if ranking_order == 'desc':
+                if ranking_order == RatingCalculator.ASCENDING:  # i.e Lower is better
+                    row_score += RatingCalculator.DECILE - field_decile
+                if ranking_order == RatingCalculator.DESCENDING:
                     row_score += field_decile + 1
             scores.append(row_score)
 

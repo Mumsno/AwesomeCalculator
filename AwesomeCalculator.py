@@ -3,14 +3,15 @@ Awesome Calculator is a ranking program that searches for sub-repos of awesome r
 Author: Amit Tal
 """
 
-import argparse
-import logging
 from re import sub
 from pprint import pprint
 
 from GitHubAPI import GitHubAPI
 from AwesomeRating import RatingCalculator
 from GitRepository import Repository
+
+import argparse
+import logging
 
 
 def get_user_input():

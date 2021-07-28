@@ -1,3 +1,7 @@
+"""
+AwesomeCalculator Custom Exceptions
+"""
+
 class GitApiException(Exception):
     pass
 
