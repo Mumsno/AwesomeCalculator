@@ -1,4 +1,11 @@
+"""
+Represents a github repistory and sub-repistory
+"""
+
 from dateutil.relativedelta import relativedelta
+
+from GitHubAPI import GitHubAPI, GitApiException
+from AwesomeExceptions import ReadmeParsingException
 
 import re
 import dateutil.parser
@@ -6,11 +13,6 @@ import logging
 import datetime
 import time
 
-from GitHubAPI import GitHubAPI, GitApiException
-
-LINK_PATTERN = re.compile(
-    u"\* \[(?P<friendly_name>.*)\]\(https://github\.com/(?P<owner_name>.*?)/(?P<repo_name>.*?)\) - (?P<description>.*)\.")
-HALF_A_YEAR_AGO = datetime.datetime.today() - relativedelta(months=+6)
 logger = logging.getLogger(__name__)
 
 
@@ -20,12 +22,12 @@ class RepositoryInfo(object):
     """
 
     def __init__(self, repo):
-        self.repo = repo
-        self.stars_count = 0
-        self.last_issue_date = None
-        self.issues_count = 0
-        self.license = None
-        self.forks_count = 0
+        self._repo = repo
+        self._stars_count = 0
+        self._last_issue_date = None
+        self._issues_count = 0
+        self._license = None
+        self._forks_count = 0
 
     def __str__(self):
         return u"""
@@ -34,7 +36,11 @@ class RepositoryInfo(object):
         Opened Issues Count (Last 6 months): {issues_count}
         License Type: {license_type}
         Forks Count: {forks_count}
-        """.format(stars_count=self.stars_count, last_issue_date=self.last_issue_date, issues_count=self.issues_count, license_type=self.license['key'], forks_count=self.forks_count)
+        """.format(stars_count=self._stars_count,
+                   last_issue_date=self._last_issue_date,
+                   issues_count=self._issues_count,
+                   license_type=self._license['key'],
+                   forks_count=self._forks_count)
 
     def __repr__(self):
         return self.__str__()
@@ -44,26 +50,33 @@ class RepositoryInfo(object):
         Fetches repo info using the API and parses it
         """
 
-        logger.debug("Collecting repo info for {}".format(self.repo))
+        logger.debug("Collecting repo info for {}".format(self._repo))
 
-        repo_info = self.repo.git_api.get_repo_info(self.repo)
-        issues_info = self.repo.git_api.get_issues_data(
-            self.repo, since=HALF_A_YEAR_AGO)
+        six_months_ago = datetime.datetime.today() - relativedelta(months=+6)
+        repo_info = self._repo.git_api.get_repo_info(self._repo)
+        issues_info = self._repo.git_api.get_issues_data(
+            self._repo, since=six_months_ago)
 
-        self.stars_count = repo_info['stargazers_count']
-        self.forks_count = repo_info['forks_count']
-        self.license = repo_info['license']
+        self._stars_count = repo_info['stargazers_count']
+        self._forks_count = repo_info['forks_count']
+        self._license = repo_info['license']
 
-        # Timestamp
-        self.last_issue_date = time.mktime(dateutil.parser.isoparse(
-            issues_info['items'][0]['created_at']).timetuple()) if issues_info['items'] else 0
-        self.issues_count = issues_info['total_count']
+        self._last_issue_date = 0
+        if issues_info['items']:
+            last_issue_date = issues_info['items'][0]['created_at']
+            # Convertion to timestamp
+            self._last_issue_date = time.mktime(
+                dateutil.parser.isoparse(last_issue_date).timetuple())
+
+        self._issues_count = issues_info['total_count']
 
 
 class Repository(object):
     """
     Represents a Git Repository, and in charge of parsing Awesome data and sub-repos.
     """
+
+    LINK_PATTERN = u"\* \[(?P<friendly_name>.*)\]\(https://github\.com/(?P<owner_name>.*?)/(?P<repo_name>.*?)\) - (?P<description>.*)\."
 
     def __init__(self, friendly_name, owner, repo_name, description, git_api):
         self.owner = owner
@@ -84,7 +97,13 @@ class Repository(object):
         return self.__str__()
 
     def to_dict(self):
-        return {"description": self.description, "url": self.url, "stars": self.repo_info.stars_count, "last_issue_date": self.repo_info.last_issue_date, "issues_count": self.repo_info.issues_count, "license": self.repo_info.license, "forks_count": self.repo_info.forks_count}
+        return {"description": self.description,
+                "url": self.url,
+                "stars": self.repo_info._stars_count,
+                "last_issue_date": self.repo_info._last_issue_date,
+                "issues_count": self.repo_info._issues_count,
+                "license": self.repo_info._license,
+                "forks_count": self.repo_info._forks_count}
 
     def get_sub_repos(self):
         """
@@ -113,7 +132,7 @@ class Repository(object):
         :return: a list of tuples in the following structure: (friendly_name, owner_name, repo_name)
         """
 
-        groups = re.findall(LINK_PATTERN, text)
+        groups = re.findall(re.compile(Repository.LINK_PATTERN), text)
         if not groups:
             raise ReadmeParsingException(
                 u"Could not parse readme of repo {}".format(self))
@@ -122,7 +141,3 @@ class Repository(object):
 
     def collect_repo_info(self):
         self.repo_info.collect_repo_info()
-
-
-class ReadmeParsingException(Exception):
-    pass

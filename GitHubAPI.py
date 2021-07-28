@@ -4,6 +4,7 @@ This module wraps GitHub's API Interface
 
 from requests import get
 
+from AwesomeExceptions import GitApiException
 
 class HTTPStatuses(object):
     """
@@ -107,7 +108,3 @@ class GitHubAPI(object):
                 u"Request Failed For {}".format(response.url))
 
         return response
-
-
-class GitApiException(Exception):
-    pass
