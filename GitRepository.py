@@ -1,5 +1,5 @@
 """
-Represents a github repistory and sub-repistory
+Represents a github repistory and sub-repistories.
 """
 
 from dateutil.relativedelta import relativedelta
@@ -81,9 +81,10 @@ class Repository(object):
     def __init__(self, friendly_name, owner, repo_name, description, git_api):
         self.owner = owner
         self.repo_name = repo_name
-        self.friendly_name = friendly_name
         self.description = description
+        self.friendly_name = friendly_name
         self.git_api = git_api
+
         self.repo_info = RepositoryInfo(self)
 
     @ property
@@ -112,10 +113,11 @@ class Repository(object):
         :return: returns a list of Repo objects
         """
 
+        repos = []
+
         logger.info("Fetching sub-repos")
         repos_groups = self.__parse_markdown(
             self.git_api.get_readme(self))
-        repos = []
 
         for group in repos_groups:
             repos.append(Repository(

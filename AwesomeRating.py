@@ -1,3 +1,7 @@
+"""
+In charge of Serializing the data and calculating the deciles in order to calculate awesomness.
+"""
+
 import pandas as pd
 import logging
 
@@ -16,8 +20,8 @@ class RatingCalculator(object):
                                                              "Description"), ("license", "License"), ("url", "Link")]
 
     def __init__(self, repos):
-        self.repos = repos
-        self.data_frame = self.__create_decile_data_frame()
+        self._repos = repos
+        self._data_frame = self.__create_decile_data_frame()
 
     def __create_decile_data_frame(self):
         """
@@ -26,7 +30,7 @@ class RatingCalculator(object):
         :return: pandas data frame
         """
 
-        data_frame = pd.DataFrame(self.repos)
+        data_frame = pd.DataFrame(self._repos)
 
         for field in RatingCalculator.RANKING_FIELDS:
             field_name = field[0]
@@ -42,7 +46,7 @@ class RatingCalculator(object):
 
         logger.info("Calculating Awesomeness")
         scores = []
-        for _, row in self.data_frame.iterrows():
+        for _, row in self._data_frame.iterrows():
             row_score = 0
             for ranking_field, ranking_order in RatingCalculator.RANKING_FIELDS:
                 field_decile = row[RatingCalculator.DECILE_FORMAT.format(
@@ -53,7 +57,7 @@ class RatingCalculator(object):
                     row_score += field_decile + 1
             scores.append(row_score)
 
-        self.data_frame['awesomeness'] = scores
+        self._data_frame['awesomeness'] = scores
 
     def serialize(self):
         """
@@ -63,7 +67,7 @@ class RatingCalculator(object):
         """
 
         serialized_data = []
-        for _, row in self.data_frame.iterrows():
+        for _, row in self._data_frame.iterrows():
             serialized_row = {}
             for field, display_name in RatingCalculator.SERIALIZEABLE_FIELDS:
                 serialized_row[display_name] = row[field]
