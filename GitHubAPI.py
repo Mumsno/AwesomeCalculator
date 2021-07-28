@@ -1,5 +1,5 @@
 """
-This module GitHub's API Interface
+This module wraps GitHub's API Interface
 """
 
 from requests import get
@@ -20,9 +20,9 @@ class GitAPIEndpoints(object):
     All Github API's endpoints
     """
 
-    REPO_INFO = "https://api.github.com/repos/{owner_name}/{repo_name}"
-    README = "https://raw.githubusercontent.com/{owner_name}/{repo_name}/master/README.md"
-    ISSUES_INFO = "https://api.github.com/search/issues"
+    REPO_INFO = u"https://api.github.com/repos/{owner_name}/{repo_name}"
+    README = u"https://raw.githubusercontent.com/{owner_name}/{repo_name}/master/README.md"
+    ISSUES_INFO = u"https://api.github.com/search/issues"
 
 
 class GitHubAPI(object):
@@ -31,7 +31,7 @@ class GitHubAPI(object):
     """
 
     SEARCH_STRING_FORMAT = "q=repo:{owner}/{repo_name}+type:issue+state:{state}+sort:created+created:>{since}"
-    ISSUE_STATE_CHOICES = ("open", "closed")
+    ISSUE_STATE_OPTIONS = ("open", "closed")
 
     def __init__(self, token):
         self._token = token
@@ -75,7 +75,8 @@ class GitHubAPI(object):
         :state: issue's state to query, choices are: "all", "closed", "opened". default is "all".
         """
 
-        issues_state = state if state.lower() in GitHubAPI.ISSUE_STATE_CHOICES else "open"
+        issues_state = state if state.lower(
+        ) in GitHubAPI.ISSUE_STATE_OPTIONS else GitHubAPI.ISSUE_STATE_OPTIONS[0]
         search_string = GitHubAPI.SEARCH_STRING_FORMAT.format(
             owner=repo.owner, repo_name=repo.repo_name, state=issues_state, since=since.strftime("%Y-%m-%d"))
         api_url = GitAPIEndpoints.ISSUES_INFO.format(
